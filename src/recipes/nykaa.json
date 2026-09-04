@@ -1,0 +1,12 @@
+{
+  "domain": "nykaa.com",
+  "name": "Nykaa",
+  "preActions": [],
+  "ctaSelectors": [
+    "button:has-text('Add to Bag')",
+    "div.cart-btn button",
+    "button.css-130p7da"
+  ],
+  "cartEndpointPattern": "/gateway-api/cartapi/v1/item/add/refresh",
+  "expectedMethod": "POST"
+}

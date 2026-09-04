@@ -1,0 +1,12 @@
+{
+  "domain": "meesho.com",
+  "name": "Meesho",
+  "preActions": [],
+  "ctaSelectors": [
+    "button:has-text('Add to Cart')",
+    "button:has-text('Buy Now')",
+    "span:has-text('Add to Cart')"
+  ],
+  "cartEndpointPattern": "/cart",
+  "expectedMethod": "POST"
+}

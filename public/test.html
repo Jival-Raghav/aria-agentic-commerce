@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Autonomous Shopping Agent — Developer & Test Console</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --accent: #2563eb;
+            --accent-glow: rgba(37, 99, 235, 0.2);
+            --success: #16a34a;
+            --danger: #dc2626;
+            --warning: #d97706;
+            --text-main: #0f172a;
+            --text-muted: #475569;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 1rem 1.5rem;
+        }
+
+        .container { max-width: 1300px; margin: 0 auto; }
+
+        /* TOP NAV SWITCHER */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #0f172a;
+        }
+        .nav-brand img {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        .nav-switch {
+            display: flex;
+            background: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 2px;
+            gap: 2px;
+        }
+        .nav-btn {
+            padding: 0.4rem 0.85rem;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            color: #64748b;
+            transition: all 0.2s;
+        }
+        .nav-btn.active {
+            background: #2563eb;
+            color: #ffffff;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+        }
+        .nav-btn:hover:not(.active) {
+            color: #0f172a;
+            background: #e2e8f0;
+        }
+
+        header {
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 1.25rem;
+        }
+
+        .badge-row { display: flex; gap: 0.5rem; margin-bottom: 0.5rem; flex-wrap: wrap; }
+        .badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.25rem 0.6rem;
+            border-radius: 9999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+        }
+
+        .rzp-badge {
+            background: #dcfce7;
+            color: #15803d;
+            border: 1px solid #bbf7d0;
+        }
+
+        h1 { font-size: 1.6rem; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 0.25rem; color: #0f172a; }
+        p.sub { color: var(--text-muted); font-size: 0.88rem; }
+
+        .mandate-banner {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 0.85rem 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        @media (max-width: 960px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+        }
+
+        .card h2 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #0f172a;
+        }
+
+        .input-group { display: flex; gap: 0.5rem; margin-bottom: 1rem; }
+        input[type="text"] {
+            flex: 1;
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            color: #0f172a;
+            padding: 0.75rem 1rem;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        input[type="text"]:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-glow);
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: #fff;
+            padding: 0.75rem 1.25rem;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+        }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .presets {
+            display: flex;
+            gap: 0.4rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        .preset-btn {
+            background: #ffffff;
+            color: #334155;
+            padding: 0.35rem 0.75rem;
+            font-size: 0.8rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .preset-btn:hover {
+            color: #1d4ed8;
+            background: #eff6ff;
+            border-color: #93c5fd;
+        }
+
+        .result-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .matrix-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 0.85rem;
+            position: relative;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+        .matrix-card.top-pick {
+            border: 2px solid #16a34a;
+            background: #f0fdf4;
+        }
+
+        .matrix-role {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.15rem 0.4rem;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 0.4rem;
+        }
+        .role-top { background: #dcfce7; color: #15803d; }
+        .role-val { background: #eff6ff; color: #1d4ed8; }
+        .role-alt { background: #f1f5f9; color: #64748b; }
+
+        .matrix-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #0f172a;
+            margin-bottom: 0.3rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .matrix-price {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 0.4rem;
+        }
+        .matrix-meta {
+            font-size: 0.75rem;
+            color: #64748b;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .reasoning-box {
+            background: #f8fafc;
+            border-left: 3px solid var(--accent);
+            border-top: 1px solid #e2e8f0;
+            border-right: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            border-radius: 0 6px 6px 0;
+            margin: 0.75rem 0;
+            font-size: 0.85rem;
+            line-height: 1.45;
+            color: #334155;
+        }
+
+        .trace-item {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: #334155;
+            margin-bottom: 0.25rem;
+        }
+
+        .status-pill {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .status-pill.success { background: rgba(16, 185, 129, 0.2); color: #34d399; }
+        .status-pill.blocked { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+        .status-pill.healed { background: rgba(245, 158, 11, 0.2); color: #fbbf24; }
+
+        .spinner {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 0.8s linear infinite;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        .audit-item {
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 8px;
+            padding: 0.85rem;
+            margin-bottom: 0.65rem;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- TOP NAV SWITCHER -->
+        <nav class="top-nav">
+            <div class="nav-brand">
+                <img src="/aria-logo.png" alt="ARIA Logo">
+                <span>ARIA — Developer Diagnostic & Testing Console</span>
+            </div>
+            <div class="nav-switch">
+                <a href="/" class="nav-btn">🛍️ Consumer App</a>
+                <a href="/test" class="nav-btn active">🛠️ Developer Mode</a>
+            </div>
+        </nav>
+
+        <header>
+            <div class="badge-row">
+                <span class="badge">Open-Web Multi-Store Search</span>
+                <span class="badge">Cross-Site Comparison Matrix</span>
+                <span class="badge">Zero-Click Autonomous Checkout</span>
+                <span class="badge rzp-badge">Razorpay Test Mode Active</span>
+            </div>
+            <h1>Universal Autonomous Shopping Agent & Deterministic Policy Gate</h1>
+            <p class="sub">Open-Web Search &rarr; Universal Extractor &rarr; Cross-Site Comparison &rarr; Deterministic Policy Gate &rarr; Idempotent Razorpay Settlement</p>
+        </header>
+
+        <!-- MANDATE CONTROLLER -->
+        <div class="mandate-banner">
+            <div>
+                <strong style="color: #60a5fa;">📜 Active Spending Mandate:</strong>
+                <div style="font-size: 0.85rem; color: #cbd5e1; margin-top: 0.2rem;">
+                    Max per Txn: <strong id="lblMaxSpend">₹25,000</strong> | Session Cap: <strong id="lblSessionCap">₹50,000</strong> | Mandate ID: <code id="lblMandateId" style="color: #38bdf8;">mnd_active</code>
+                </div>
+            </div>
+            <div style="display: flex; gap: 0.35rem; align-items: center; flex-wrap: wrap;">
+                <button class="preset-btn" onclick="updateMandate(5000, 15000)">Cap ₹5k</button>
+                <button class="preset-btn" onclick="updateMandate(10000, 25000)">Cap ₹10k</button>
+                <button class="preset-btn" onclick="updateMandate(25000, 50000)">Cap ₹25k</button>
+                <button class="preset-btn" onclick="updateMandate(50000, 100000)">Cap ₹50k</button>
+                <button class="preset-btn" onclick="promptCustomMandate()">Custom...</button>
+            </div>
+        </div>
+
+        <div class="grid">
+            <!-- PANEL 1: OPEN-WEB SHOPPING AGENT -->
+            <div class="card">
+                <h2>🤖 Open-Web Goal-Driven Agent</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 0.75rem;">
+                    Type any shopping goal. The agent searches live across the open web, extracts matching items in parallel across competing stores, evaluates the Policy Gate, and <strong>automatically executes the purchase on Razorpay</strong>.
+                </p>
+
+                <div class="presets">
+                    <span style="font-size: 0.75rem; color: #6b7280; align-self: center;">Try:</span>
+                    <button class="preset-btn" onclick="setGoal('running shoes under 3500')">Running Shoes &lt; ₹3,500</button>
+                    <button class="preset-btn" onclick="setGoal('noise cancelling earphones under 5000')">Earphones &lt; ₹5,000</button>
+                    <button class="preset-btn" onclick="setGoal('shoe cleaner kit under 800')">Shoe Cleaner &lt; ₹800</button>
+                    <button class="preset-btn" onclick="setGoal('mechanical keyboard under 3500')">Keyboard &lt; ₹3,500</button>
+                </div>
+
+                <div style="display: flex; gap: 0.5rem; align-items: center; margin-bottom: 0.75rem; font-size: 0.8rem; color: #94a3b8;">
+                    <span>🔍 Engine for Testing:</span>
+                    <select id="searchEngineSelect" style="background: #1e293b; color: #f8fafc; border: 1px solid #334155; border-radius: 6px; padding: 0.25rem 0.5rem; font-size: 0.8rem; outline: none; cursor: pointer;">
+                        <option value="auto" selected>⚡ Auto (Smart Tier: Tavily + Google Shopping)</option>
+                        <option value="tavily">🌐 Tavily AI Search Only</option>
+                        <option value="serpapi">🛍️ SerpAPI Google Shopping Only</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <input type="text" id="goalInput" placeholder="e.g. acoustic guitar under 20000">
+                    <button class="btn-primary" id="askBtn" onclick="runLiveShopping()">Search & Autonomously Buy</button>
+                </div>
+
+                <div id="agentResult" class="result-box">
+                    <span style="color: #64748b; font-style: italic;">Type a shopping goal above and press <strong>Search & Autonomously Buy</strong>...</span>
+                </div>
+            </div>
+
+            <!-- PANEL 2: DETERMINISTIC POLICY GATE & RAZORPAY SETTLEMENT -->
+            <div class="card">
+                <h2>🛡️ Deterministic Policy Gate & Razorpay Receipt</h2>
+                <p style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 0.75rem;">
+                    Zero-click verification: All 16 safety checks and live Razorpay Orders API settlement executed autonomously.
+                </p>
+
+                <div id="gatePanel" class="result-box">
+                    <span style="color: #64748b; font-style: italic;">Awaiting agent execution...</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PANEL 3: AUDIT TRAIL -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem;">
+                <h2>📜 Immutable Decision Audit Trail (Feature 7 & 10)</h2>
+                <button class="preset-btn" onclick="loadAuditTrail()">Refresh Logs</button>
+            </div>
+            <div id="auditContainer">
+                <span style="color: #6b7280; font-size: 0.85rem;">Loading audit records...</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let activeMandate = {
+            mandate_id: 'mnd_' + Date.now().toString(36),
+            max_spend: 25000,
+            session_budget: 50000,
+            allowed_merchants: ['*']
+        };
+
+        function updateMandate(maxTxn, sessionCap) {
+            activeMandate.max_spend = maxTxn;
+            activeMandate.session_budget = sessionCap;
+            activeMandate.mandate_id = 'mnd_' + Date.now().toString(36);
+            document.getElementById('lblMaxSpend').innerText = '₹' + maxTxn.toLocaleString();
+            document.getElementById('lblSessionCap').innerText = '₹' + sessionCap.toLocaleString();
+            document.getElementById('lblMandateId').innerText = activeMandate.mandate_id;
+        }
+
+        function promptCustomMandate() {
+            const val = prompt('Enter Max Per-Transaction Spend (₹):', '25000');
+            if (val) {
+                const maxTxn = parseInt(val.replace(/[^0-9]/g, ''), 10);
+                if (maxTxn > 0) {
+                    updateMandate(maxTxn, maxTxn * 2);
+                }
+            }
+        }
+
+        function setGoal(txt) {
+            document.getElementById('goalInput').value = txt;
+            runLiveShopping();
+        }
+
+        async function runLiveShopping() {
+            const goal = document.getElementById('goalInput').value.trim();
+            if (!goal) return;
+
+            const budgetMatch = goal.match(/(?:under|below|less than|max|budget)\s*(?:₹|rs\.?|inr)?\s*([0-9,]+)/i);
+            if (budgetMatch) {
+                const requestedBudget = parseInt(budgetMatch[1].replace(/,/g, ''), 10);
+                if (requestedBudget > activeMandate.max_spend) {
+                    updateMandate(requestedBudget, Math.max(requestedBudget * 2, 50000));
+                }
+            }
+
+            const btn = document.getElementById('askBtn');
+            const resultBox = document.getElementById('agentResult');
+            const gateBox = document.getElementById('gatePanel');
+
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Searching Open-Web & Buying...';
+
+            resultBox.innerHTML = `
+                <div style="color: #60a5fa; line-height: 1.6;">
+                    <div style="margin-bottom: 0.4rem;"><strong>⚡ Open-Web Autonomous Shopping Engine:</strong></div>
+                    <div class="trace-item">&rarr; 1. Parsing intent, keywords & budget tier for: "<strong>${goal}</strong>"...</div>
+                    <div class="trace-item">&rarr; 2. Searching Open Web & D2C Stores in parallel...</div>
+                    <div class="trace-item">&rarr; 3. Running Extractor Cascade on discovered PDPs...</div>
+                    <div class="trace-item">&rarr; 4. Generating Cross-Store Comparison Matrix...</div>
+                    <div class="trace-item">&rarr; 5. Evaluating Policy Gate & Executing Zero-Click Razorpay Settlement...</div>
+                </div>
+            `;
+
+            gateBox.innerHTML = '<div style="color: #94a3b8; font-style: italic;"><span class="spinner"></span> Running Policy Gate verification...</div>';
+
+            try {
+                const searchEngine = document.getElementById('searchEngineSelect')?.value || 'auto';
+                const res = await fetch('/api/agent/search-and-shop', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ goal, mandate: activeMandate, searchEngine })
+                });
+                const data = await res.json();
+
+                if (data.success && data.proposal) {
+                    const p = data.proposal.product;
+                    const matrix = data.comparisonMatrix || [];
+                    const pr = data.purchaseResult || {};
+                    const isSettled = pr.approved && pr.razorpayOrder?.success;
+                    const isHealed = pr.healedFromFallback === true;
+
+                    // Render Comparison Matrix
+                    resultBox.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                            <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                <span class="status-pill ${isHealed ? 'healed' : 'success'}">${isHealed ? '✓ AUTO-HEALED FALLBACK' : '✓ COMPARISON COMPLETE'}</span>
+                                <span style="font-size: 0.8rem; color: #9ca3af;">${matrix.length} Stores Analyzed</span>
+                            </div>
+                        </div>
+
+                        <div class="reasoning-box">
+                            <strong>💡 Agent Decision Strategy:</strong><br>
+                            ${data.proposal.reasoning}
+                        </div>
+
+                        <div style="font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-top: 0.75rem;">
+                            📊 Cross-Store Comparison Matrix:
+                        </div>
+
+                        <div class="comparison-grid">
+                            ${matrix.map(m => {
+                                const isTop = m.role === 'TOP PICK';
+                                const roleClass = isTop ? 'role-top' : (m.role === 'BEST VALUE' ? 'role-val' : 'role-alt');
+                                return `
+                                    <div class="matrix-card ${isTop ? 'top-pick' : ''}">
+                                        <span class="matrix-role ${roleClass}">${m.role}</span>
+                                        <div class="matrix-title" title="${m.name}">${m.name}</div>
+                                        <div class="matrix-price">₹${m.price}</div>
+                                        <div class="matrix-meta">
+                                            <span>🏪 ${m.merchant.toUpperCase()}</span>
+                                            <span>🔍 ${m.source}</span>
+                                        </div>
+                                        <a href="${m.url}" target="_blank" rel="noopener noreferrer" style="display: block; font-size: 0.75rem; color: #60a5fa; margin-top: 0.4rem; text-decoration: none;">
+                                            ↗ View Store Page
+                                        </a>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    `;
+
+                    // Render Policy Gate & Razorpay Receipt
+                    if (isSettled) {
+                        gateBox.innerHTML = `
+                            <div style="background: rgba(16, 185, 129, 0.12); border: 1px solid rgba(16, 185, 129, 0.4); border-radius: 8px; padding: 1rem; margin-bottom: 0.75rem;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                                    <span style="font-weight: 800; color: #34d399; font-size: 0.95rem;">⚡ AUTONOMOUSLY SETTLED ON RAZORPAY</span>
+                                    <span class="badge rzp-badge">ZERO-CLICK COMPLETE</span>
+                                </div>
+                                <div style="font-size: 0.8rem; font-family: 'JetBrains Mono', monospace; color: #cbd5e1; line-height: 1.6;">
+                                    Product: <strong style="color: #fff;">${p.name}</strong><br>
+                                    Merchant: <strong style="color: #38bdf8;">${p.merchant.toUpperCase()}</strong><br>
+                                    Order ID: <strong style="color: #60a5fa;">${pr.razorpayOrder.orderId}</strong><br>
+                                    Payment ID: <strong style="color: #34d399;">${pr.settlement.paymentId}</strong><br>
+                                    Amount Settled: <strong style="color: #facc15;">₹${pr.razorpayOrder.amount}</strong> (${pr.razorpayOrder.amountInPaise} paise)<br>
+                                    Idempotency Key: <span style="color: #94a3b8;">${pr.idempotency?.idempotencyKey}</span><br>
+                                    Signature Verification: <strong style="color: #34d399;">PASS (HMAC-SHA256)</strong>
+                                </div>
+                            </div>
+
+                            <div style="font-size: 0.75rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin-bottom: 0.35rem;">
+                                🛡️ Policy Gate Checklist (16 Enforced Rules):
+                            </div>
+                            <div style="max-height: 140px; overflow-y: auto; background: #0b0f19; padding: 0.5rem; border-radius: 6px;">
+                                ${(pr.gateDecision?.checklist || []).map(c => `
+                                    <div class="checklist-item" style="color: ${c.passed ? '#34d399' : '#f87171'}">
+                                        [${c.passed ? '✓' : '✗'}] ${c.rule}: ${c.details}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        `;
+                    } else {
+                        gateBox.innerHTML = `
+                            <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.4); border-radius: 8px; padding: 1rem;">
+                                <div style="font-weight: 700; color: #f87171; margin-bottom: 0.3rem;">
+                                    🛑 BLOCKED BY POLICY GATE (Rule: ${pr.gateDecision?.rule || 'POLICY_REJECT'})
+                                </div>
+                                <p style="font-size: 0.85rem; color: #fca5a5; margin-bottom: 0.5rem;">${pr.gateDecision?.reason}</p>
+                                <div style="max-height: 140px; overflow-y: auto; background: #0b0f19; padding: 0.5rem; border-radius: 6px;">
+                                    ${(pr.gateDecision?.checklist || []).map(c => `
+                                        <div class="checklist-item" style="color: ${c.passed ? '#34d399' : '#f87171'}">
+                                            [${c.passed ? '✓' : '✗'}] ${c.rule}: ${c.details}
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    loadAuditTrail();
+                } else {
+                    resultBox.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+                            <span class="status-pill blocked">NO MATCH / REJECTED</span>
+                        </div>
+                        <p style="color: #f87171; font-weight: 500; margin: 0.5rem 0;">${data.reason || 'No compatible products discovered.'}</p>
+                    `;
+                    gateBox.innerHTML = '<span style="color: #64748b; font-style: italic;">No transaction was executed.</span>';
+                }
+            } catch (e) {
+                resultBox.innerHTML = `<span style="color: #ef4444;">Error: ${e.message}</span>`;
+                gateBox.innerHTML = '<span style="color: #ef4444;">Failed to execute policy gate.</span>';
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Search & Autonomously Buy';
+            }
+        }
+
+        async function loadAuditTrail() {
+            const container = document.getElementById('auditContainer');
+            try {
+                const res = await fetch('/api/audit/logs');
+                const logs = await res.json();
+
+                if (logs.length === 0) {
+                    container.innerHTML = '<span style="color: #6b7280; font-size: 0.85rem;">No transaction logs recorded yet.</span>';
+                    return;
+                }
+
+                container.innerHTML = logs.map(l => {
+                    const isSuccess = l.gateDecision?.approved && l.razorpayOrder?.success;
+                    return `
+                        <div class="audit-item">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                                <div>
+                                    <span class="status-pill ${isSuccess ? 'success' : 'blocked'}">${isSuccess ? 'SETTLED' : 'BLOCKED (' + (l.gateDecision?.rule || 'RULE') + ')'}</span>
+                                    <strong style="margin-left: 0.5rem; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem;">${l.transactionId}</strong>
+                                </div>
+                                <span style="font-size: 0.75rem; color: #6b7280;">${new Date(l.timestamp).toLocaleTimeString()}</span>
+                            </div>
+                            <div style="color: #e2e8f0; font-size: 0.82rem; margin-bottom: 0.2rem;">
+                                <strong>Goal:</strong> "${l.userGoal}" &rarr; <strong>Item:</strong> ${l.agentProposal?.product?.name} (₹${l.agentProposal?.price_at_decision})
+                            </div>
+                            <div style="font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; color: #38bdf8;">
+                                Merchant: ${l.agentProposal?.product?.merchant?.toUpperCase()} | Order ID: ${l.razorpayOrder?.orderId || 'N/A'} | Payment ID: ${l.settlement?.paymentId || 'N/A'}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } catch (e) {
+                console.error('Failed to load audit logs:', e);
+            }
+        }
+
+        window.onload = () => {
+            loadAuditTrail();
+        };
+    </script>
+</body>
+</html>

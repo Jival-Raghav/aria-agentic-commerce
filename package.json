@@ -1,0 +1,23 @@
+{
+  "name": "aria-agentic-commerce",
+  "version": "1.0.0",
+  "description": "ARIA — Autonomous Retail Intelligence Agent for Razorpay AI Growth & Agentic Commerce",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "agentic-commerce",
+    "razorpay",
+    "ai-agent",
+    "shopping-agent",
+    "policy-firewall",
+    "zero-click-commerce"
+  ],
+  "author": "ARIA Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

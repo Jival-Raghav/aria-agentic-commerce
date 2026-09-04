@@ -1,0 +1,29 @@
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+
+# Dependency directories
+node_modules/
+
+# Logs and runtime data
+*.log
+npm-debug.log*
+yarn-debug.log*
+audit_logs/*.json
+!audit_logs/.gitkeep
+
+# Benchmark results & scratch files
+benchmark_*.json
+real_live_benchmark_results.json
+scratch_*.js
+test_*.js
+*.tmp
+*.bak
+
+# Root test image
+ChatGPT Image*.png
+
+# Operating System files
+.DS_Store
+Thumbs.db

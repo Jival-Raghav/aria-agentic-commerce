@@ -1,0 +1,13 @@
+{
+  "domain": "snapdeal.com",
+  "name": "Snapdeal",
+  "preActions": [],
+  "ctaSelectors": [
+    "button:has-text('ADD TO CART')",
+    "div#add-cart-button-id",
+    "div.btnCart",
+    "button.add-to-cart"
+  ],
+  "cartEndpointPattern": "/cart/",
+  "expectedMethod": "POST"
+}

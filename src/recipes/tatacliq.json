@@ -1,0 +1,23 @@
+{
+  "domain": "tatacliq.com",
+  "name": "Tata CLiQ",
+  "preActions": [
+    {
+      "type": "dismiss_modal",
+      "selectors": [
+        "button:has-text('No, Thanks')",
+        "button:has-text('Dismiss')",
+        "span.close",
+        "div[class*='close']"
+      ],
+      "optional": true
+    }
+  ],
+  "ctaSelectors": [
+    "button:has-text('Add to Bag')",
+    "div[role='button']:has-text('Add to Bag')",
+    "button.add-to-bag"
+  ],
+  "cartEndpointPattern": "/cart",
+  "expectedMethod": "POST"
+}
