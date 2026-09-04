@@ -3,6 +3,14 @@
 > **Universal Zero-Configuration Agentic Commerce Layer & Deterministic Policy Firewall on Razorpay Rails**  
 > *Built for Razorpay's AI Growth & Agentic Commerce Track*
 
+---
+
+### 🌐 Live Production Deployment
+* 🚀 **Live Storefront Web App:** **[https://aria-dusky-beta.vercel.app](https://aria-dusky-beta.vercel.app)**
+* 🛠️ **Developer Diagnostic & Policy Console:** **[https://aria-dusky-beta.vercel.app/test](https://aria-dusky-beta.vercel.app/test)**
+
+[![Live Demo](https://img.shields.io/badge/Live_Demo-aria--dusky--beta.vercel.app-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://aria-dusky-beta.vercel.app)
+[![Dev Console](https://img.shields.io/badge/Dev_Console-Test_&_Audit_Trail-0052CC?style=for-the-badge&logo=googlechrome&logoColor=white)](https://aria-dusky-beta.vercel.app/test)
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Jival-Raghav/aria-agentic-commerce&env=RAZORPAY_KEY_ID,RAZORPAY_KEY_SECRET,GROQ_API_KEY,TAVILY_API_KEY,SERPAPI_KEY)
 
 ---
