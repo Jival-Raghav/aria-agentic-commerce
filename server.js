@@ -461,7 +461,7 @@ async function requestHandler(req, res) {
     }
 
     res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Endpoint Not Found' }));
+    res.end(JSON.stringify({ error: 'Endpoint Not Found', pathname, url: req.url, headers: req.headers }));
 }
 
 const server = http.createServer(requestHandler);
