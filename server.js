@@ -187,9 +187,8 @@ function parseBody(req) {
 }
 
 async function requestHandler(req, res) {
-    const rawUrl = (req.headers && (req.headers['x-matched-path'] || req.headers['x-now-route-matches'])) || req.url;
-    const parsedUrl = url.parse(rawUrl, true);
-    const pathname = parsedUrl.pathname;
+    const parsedUrl = url.parse(req.url, true);
+    const pathname = (parsedUrl.query && parsedUrl.query.__endpoint) || parsedUrl.pathname;
 
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -198,16 +197,6 @@ async function requestHandler(req, res) {
     if (req.method === 'OPTIONS') {
         res.writeHead(204);
         res.end();
-        return;
-    }
-
-    if (pathname === '/api/debug' || (req.url && req.url.includes('debug'))) {
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({
-            url: req.url,
-            pathname,
-            headers: req.headers
-        }));
         return;
     }
 
@@ -461,7 +450,7 @@ async function requestHandler(req, res) {
     }
 
     res.writeHead(404, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify({ error: 'Endpoint Not Found', pathname, url: req.url, headers: req.headers }));
+    res.end(JSON.stringify({ error: 'Endpoint Not Found' }));
 }
 
 const server = http.createServer(requestHandler);
