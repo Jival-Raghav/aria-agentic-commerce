@@ -201,6 +201,16 @@ async function requestHandler(req, res) {
         return;
     }
 
+    if (pathname === '/api/debug' || (req.url && req.url.includes('debug'))) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+            url: req.url,
+            pathname,
+            headers: req.headers
+        }));
+        return;
+    }
+
     // Serve static assets (logo, images)
     if (pathname === '/aria-logo.png') {
         try {
