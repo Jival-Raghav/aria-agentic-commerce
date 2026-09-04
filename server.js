@@ -187,7 +187,8 @@ function parseBody(req) {
 }
 
 async function requestHandler(req, res) {
-    const parsedUrl = url.parse(req.url, true);
+    const rawUrl = (req.headers && (req.headers['x-matched-path'] || req.headers['x-now-route-matches'])) || req.url;
+    const parsedUrl = url.parse(rawUrl, true);
     const pathname = parsedUrl.pathname;
 
     res.setHeader('Access-Control-Allow-Origin', '*');
