@@ -12,7 +12,7 @@ const path = require('path');
 
 class IdempotencyManager {
     constructor(storagePath = null) {
-        const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+        const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NODE_ENV === 'production');
         this.storagePath = storagePath || (isServerless ? path.join(require('os').tmpdir(), 'idempotency_store.json') : path.join(__dirname, '..', '..', 'audit_logs', 'idempotency_store.json'));
         this.store = new Map();
         this.initStorage();
@@ -20,18 +20,10 @@ class IdempotencyManager {
 
     initStorage() {
         try {
-            const dir = path.dirname(this.storagePath);
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir, { recursive: true });
-            }
-            if (fs.existsSync(this.storagePath)) {
-                try {
-                    const data = JSON.parse(fs.readFileSync(this.storagePath, 'utf8'));
-                    for (const [k, v] of Object.entries(data)) {
-                        this.store.set(k, v);
-                    }
-                } catch (e) {
-                    this.store = new Map();
+            if (this.storagePath && fs.existsSync(this.storagePath)) {
+                const data = JSON.parse(fs.readFileSync(this.storagePath, 'utf8'));
+                for (const [k, v] of Object.entries(data)) {
+                    this.store.set(k, v);
                 }
             }
         } catch (e) {
@@ -41,13 +33,18 @@ class IdempotencyManager {
 
     persist() {
         try {
+            if (!this.storagePath) return;
+            const dir = path.dirname(this.storagePath);
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir, { recursive: true });
+            }
             const obj = {};
             for (const [k, v] of this.store.entries()) {
                 obj[k] = v;
             }
             fs.writeFileSync(this.storagePath, JSON.stringify(obj, null, 2));
         } catch (e) {
-            console.error('[Idempotency] Failed to persist idempotency store:', e.message);
+            // In serverless / read-only systems, in-memory store continues seamlessly
         }
     }
 

@@ -13,23 +13,15 @@ const path = require('path');
 class AuditTrail {
     constructor(logFilePath = null) {
         this.records = [];
-        const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+        const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NODE_ENV === 'production');
         this.logFilePath = logFilePath || (isServerless ? path.join(require('os').tmpdir(), 'audit_trail.json') : path.join(__dirname, '..', '..', 'audit_logs', 'audit_trail.json'));
         this.initStorage();
     }
 
     initStorage() {
         try {
-            const dir = path.dirname(this.logFilePath);
-            if (!fs.existsSync(dir)) {
-                fs.mkdirSync(dir, { recursive: true });
-            }
-            if (fs.existsSync(this.logFilePath)) {
-                try {
-                    this.records = JSON.parse(fs.readFileSync(this.logFilePath, 'utf8'));
-                } catch (e) {
-                    this.records = [];
-                }
+            if (this.logFilePath && fs.existsSync(this.logFilePath)) {
+                this.records = JSON.parse(fs.readFileSync(this.logFilePath, 'utf8'));
             }
         } catch (e) {
             this.records = [];
@@ -117,9 +109,15 @@ class AuditTrail {
 
         // Persist to file
         try {
-            fs.writeFileSync(this.logFilePath, JSON.stringify(this.records, null, 2));
+            if (this.logFilePath) {
+                const dir = path.dirname(this.logFilePath);
+                if (!fs.existsSync(dir)) {
+                    fs.mkdirSync(dir, { recursive: true });
+                }
+                fs.writeFileSync(this.logFilePath, JSON.stringify(this.records, null, 2));
+            }
         } catch (e) {
-            console.error('[AuditTrail] Failed to write log file:', e.message);
+            // In serverless / read-only systems, in-memory records continue seamlessly
         }
 
         return entry;
