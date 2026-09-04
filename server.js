@@ -161,6 +161,12 @@ function serveHtmlFile(res, filename) {
 
 function parseBody(req) {
     return new Promise((resolve) => {
+        if (req.body && typeof req.body === 'object') {
+            return resolve(req.body);
+        }
+        if (typeof req.body === 'string') {
+            try { return resolve(JSON.parse(req.body)); } catch (e) { return resolve({}); }
+        }
         let body = '';
         req.on('data', chunk => body += chunk);
         req.on('end', () => {
@@ -170,7 +176,7 @@ function parseBody(req) {
     });
 }
 
-const server = http.createServer(async (req, res) => {
+async function requestHandler(req, res) {
     const parsedUrl = url.parse(req.url, true);
     const pathname = parsedUrl.pathname;
 
@@ -425,10 +431,16 @@ const server = http.createServer(async (req, res) => {
 
     res.writeHead(404, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify({ error: 'Endpoint Not Found' }));
-});
+}
 
-server.listen(PORT, () => {
-    console.log(`\n================================================================`);
-    console.log(`🚀 AGENTIC COMMERCE ENGINE LIVE: http://localhost:${PORT}`);
-    console.log(`================================================================\n`);
-});
+const server = http.createServer(requestHandler);
+
+if (require.main === module) {
+    server.listen(PORT, () => {
+        console.log(`\n================================================================`);
+        console.log(`🚀 AGENTIC COMMERCE ENGINE LIVE: http://localhost:${PORT}`);
+        console.log(`================================================================\n`);
+    });
+}
+
+module.exports = requestHandler;
