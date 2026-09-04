@@ -13,21 +13,26 @@ const path = require('path');
 class AuditTrail {
     constructor(logFilePath = null) {
         this.records = [];
-        this.logFilePath = logFilePath || path.join(__dirname, '..', '..', 'audit_logs', 'audit_trail.json');
+        const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+        this.logFilePath = logFilePath || (isServerless ? path.join(require('os').tmpdir(), 'audit_trail.json') : path.join(__dirname, '..', '..', 'audit_logs', 'audit_trail.json'));
         this.initStorage();
     }
 
     initStorage() {
-        const dir = path.dirname(this.logFilePath);
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
-        if (fs.existsSync(this.logFilePath)) {
-            try {
-                this.records = JSON.parse(fs.readFileSync(this.logFilePath, 'utf8'));
-            } catch (e) {
-                this.records = [];
+        try {
+            const dir = path.dirname(this.logFilePath);
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir, { recursive: true });
             }
+            if (fs.existsSync(this.logFilePath)) {
+                try {
+                    this.records = JSON.parse(fs.readFileSync(this.logFilePath, 'utf8'));
+                } catch (e) {
+                    this.records = [];
+                }
+            }
+        } catch (e) {
+            this.records = [];
         }
     }
 

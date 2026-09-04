@@ -12,25 +12,30 @@ const path = require('path');
 
 class IdempotencyManager {
     constructor(storagePath = null) {
-        this.storagePath = storagePath || path.join(__dirname, '..', '..', 'audit_logs', 'idempotency_store.json');
+        const isServerless = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+        this.storagePath = storagePath || (isServerless ? path.join(require('os').tmpdir(), 'idempotency_store.json') : path.join(__dirname, '..', '..', 'audit_logs', 'idempotency_store.json'));
         this.store = new Map();
         this.initStorage();
     }
 
     initStorage() {
-        const dir = path.dirname(this.storagePath);
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
-        }
-        if (fs.existsSync(this.storagePath)) {
-            try {
-                const data = JSON.parse(fs.readFileSync(this.storagePath, 'utf8'));
-                for (const [k, v] of Object.entries(data)) {
-                    this.store.set(k, v);
-                }
-            } catch (e) {
-                this.store = new Map();
+        try {
+            const dir = path.dirname(this.storagePath);
+            if (!fs.existsSync(dir)) {
+                fs.mkdirSync(dir, { recursive: true });
             }
+            if (fs.existsSync(this.storagePath)) {
+                try {
+                    const data = JSON.parse(fs.readFileSync(this.storagePath, 'utf8'));
+                    for (const [k, v] of Object.entries(data)) {
+                        this.store.set(k, v);
+                    }
+                } catch (e) {
+                    this.store = new Map();
+                }
+            }
+        } catch (e) {
+            this.store = new Map();
         }
     }
 

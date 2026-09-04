@@ -149,10 +149,20 @@ const PUBLIC_DIR = path.join(__dirname, 'public');
 
 function serveHtmlFile(res, filename) {
     try {
-        const filePath = path.join(PUBLIC_DIR, filename);
-        const content = fs.readFileSync(filePath, 'utf-8');
-        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
-        res.end(content);
+        let filePath = path.join(PUBLIC_DIR, filename);
+        if (!fs.existsSync(filePath)) {
+            filePath = path.join(process.cwd(), 'public', filename);
+        }
+        if (!fs.existsSync(filePath)) {
+            filePath = path.join(process.cwd(), filename);
+        }
+        if (fs.existsSync(filePath)) {
+            const content = fs.readFileSync(filePath, 'utf-8');
+            res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+            return res.end(content);
+        }
+        res.writeHead(404, { 'Content-Type': 'text/plain' });
+        res.end(`Error loading ${filename}: File not found`);
     } catch (e) {
         res.writeHead(500, { 'Content-Type': 'text/plain' });
         res.end(`Error loading ${filename}: ${e.message}`);
@@ -193,10 +203,20 @@ async function requestHandler(req, res) {
     // Serve static assets (logo, images)
     if (pathname === '/aria-logo.png') {
         try {
-            const imgPath = path.join(PUBLIC_DIR, 'aria-logo.png');
-            const imgData = fs.readFileSync(imgPath);
-            res.writeHead(200, { 'Content-Type': 'image/png' });
-            res.end(imgData);
+            let imgPath = path.join(PUBLIC_DIR, 'aria-logo.png');
+            if (!fs.existsSync(imgPath)) {
+                imgPath = path.join(process.cwd(), 'public', 'aria-logo.png');
+            }
+            if (!fs.existsSync(imgPath)) {
+                imgPath = path.join(process.cwd(), 'aria-logo.png');
+            }
+            if (fs.existsSync(imgPath)) {
+                const imgData = fs.readFileSync(imgPath);
+                res.writeHead(200, { 'Content-Type': 'image/png' });
+                return res.end(imgData);
+            }
+            res.writeHead(404, { 'Content-Type': 'text/plain' });
+            res.end('Logo not found');
         } catch (e) {
             res.writeHead(404, { 'Content-Type': 'text/plain' });
             res.end('Logo not found');
